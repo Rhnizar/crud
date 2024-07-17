@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations with API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-control {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CRUD Operations with API</h1>
+
+    <h2>Create Item</h2>
+    <div>
+        <input type="text" id="username" placeholder="username" class="form-control">
+        <input type="number" id="age" placeholder="age" class="form-control">
+        <button onclick="createItem()">Create</button>
+    </div>
+
+    <h2>Read Items</h2>
+    <div>
+        <button onclick="readItems()">Read All</button>
+        <ul id="itemsList"></ul>
+    </div>
+
+    <h2>Update Item</h2>
+    <div>
+        <input type="text" id="updateId" placeholder="ID" class="form-control">
+        <input type="text" id="updateusername" placeholder="New Name" class="form-control">
+        <button onclick="updateItem()">Update</button>
+    </div>
+
+    <h2>Delete Item</h2>
+    <div>
+        <input type="text" id="deleteId" placeholder="ID" class="form-control">
+        <button onclick="deleteItem()">Delete</button>
+    </div>
+
+    <h2>Test http methods</h2>
+    <button onclick="example_view_Get()">GET</button>
+    <button onclick="example_view_Post()">POST</button>
+    <button onclick="example_view_Put()">PUT</button>
+    <button onclick="example_view_Delete()">DELETE</button>
+    <h3 id="msg"></h3>
+
+    <script>
+        // const apiUrl = 'https://example.com/api/items';
+        // const apiUrl = 'http://127.0.0.1:8000/crud';
+        const apiUrl = 'http://127.0.0.1:8000/crud/example';
+
+
+        
+        async function example_view_Post() {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: "Post Method",
+            });
+        }
+
+        async function example_view_Get() {
+            const response = await fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+            const message = document.getElementById('msg');
+            message.innerHTML = response.body;
+        }
+
+        async function example_view_Put() {
+            const response = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: "Put Method",
+            });
+        }
+        async function example_view_Delete() {
+            const response = await fetch(apiUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: "Delete Method",
+            });
+
+            const message = document.getElementById('msg');
+            message.innerHTML = response.body;
+        }
+
+        async function createItem() {
+            console.log("heeeeere");
+            const username = document.getElementById('username').value;
+            const age = document.getElementById('age').value;
+            const member = {
+                username: username,
+                age: age
+            };
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(member),
+            });
+            const data = await response.json();
+            console.log('Item created:', data);
+            readItems();
+        }
+
+        async function readItems() {
+            try {
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                const data = await response.json();
+                const itemsList = document.getElementById('itemsList');
+                itemsList.innerHTML = '';
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${item.id}, username: ${item.username},  age: ${item.age}`;
+                    itemsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function updateItem() {
+            try
+            {
+                const id = document.getElementById('updateId').value;
+                const username = document.getElementById('updateusername').value;
+                const response = await fetch(`${apiUrl}/${id}/`, {
+                    // method: 'PUT',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                    body: JSON.stringify({ username })
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log(data)
+                console.log('Item updated:', data);
+                // readItems();
+            } catch(error) {
+                console.error('Error updating item:', error);
+            }
+        }
+
+        async function deleteItem() {
+            const id = document.getElementById('deleteId').value;
+            const response = await fetch(`${apiUrl}/${id}`, {
+                method: 'DELETE'
+                // method: 'GET'
+            });
+            const data = await response.json();
+            console.log('Item deleted:', data);
+            readItems();
+        }
+    </script>
+</body>
+</html>

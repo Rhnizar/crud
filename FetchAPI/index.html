@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Fetch API Example</title>
+</head>
+<body>
+    <h1>Fetch Data with JavaScript</h1>
+    <button id="fetchButton">Fetch Data</button>
+    <div id="dataContainer"></div>
+
+    <h2>Add a New Player</h2>
+
+    <form id="playerForm">
+        <input type="text" id="username" name="username" required>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script src="script.js"></script>
+</body>
+</html>
