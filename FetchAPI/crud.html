@@ -43,6 +43,8 @@
     </div>
 
     <h2>Test http methods</h2>
+    <input type="text" id="Id" placeholder="ID" class="form-control">
+    <br>
     <button onclick="example_view_Get()">GET</button>
     <button onclick="example_view_Post()">POST</button>
     <button onclick="example_view_Put()">PUT</button>
@@ -52,8 +54,15 @@
     <script>
         // const apiUrl = 'https://example.com/api/items';
         // const apiUrl = 'http://127.0.0.1:8000/crud';
-        const apiUrl = 'http://127.0.0.1:8000/crud/example';
+        const apiUrl = 'http://127.0.0.1:8000/crud/';
 
+        async function example_view_Get() {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            console.log(data);
+            const message = document.getElementById('msg');
+            message.innerHTML = data.message;
+        }
 
         
         async function example_view_Post() {
@@ -62,41 +71,43 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: "Post Method",
+                body: JSON.stringify("Post Method"),
             });
+            const data = await response.json();
+            console.log(data);
+            const message = document.getElementById('msg');
+            message.innerHTML = data.message;
         }
 
-        async function example_view_Get() {
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            });
-            const message = document.getElementById('msg');
-            message.innerHTML = response.body;
-        }
 
         async function example_view_Put() {
-            const response = await fetch(apiUrl, {
+            const id = document.getElementById('Id').value;
+            const response = await fetch(`${apiUrl}/${id}/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: "Put Method",
+                body: JSON.stringify("Put Method"),
             });
+            const data = await response.json();
+            console.log(data);
+            const message = document.getElementById('msg');
+            message.innerHTML = data.message;
         }
+
         async function example_view_Delete() {
-            const response = await fetch(apiUrl, {
+            const id = document.getElementById('Id').value;
+            const response = await fetch(`${apiUrl}/${id}/`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: "Delete Method",
+                body: JSON.stringify("Delete Method"),
             });
-
+            const data = await response.json();
+            console.log(data);
             const message = document.getElementById('msg');
-            message.innerHTML = response.body;
+            message.innerHTML = data.message;
         }
 
         async function createItem() {

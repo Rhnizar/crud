@@ -26,34 +26,36 @@ from django.views.decorators.http import require_http_methods
 def example_view(request):
     if request.method == 'GET':
         # Handle GET request
-        return Response({'message': 'This is a GET response'})
+        return JsonResponse({'message': 'This is a GET response'}, safe=False)
 
     elif request.method == 'POST':
         # Handle POST request
         data = request.data
-        return Response({'message': f'This is a POST response with data: {data}'})
-    
-    elif request.method == 'PUT':
-        # Handle PUT request
-        data = request.data
-        return Response({'message': f'This is a PUT response with data: {data}'})
-    
-    elif request.method == 'DELETE':
-        # Handle DELETE request
-        return Response({'message': 'This is a DELETE response'})
+        return Response({'message': f'This is a POST response with data: {data}'},)
 
     # Handle other HTTP methods if needed
     return Response({'message': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+def example_view2(request, id):
+    if request.method == 'PUT':
+        # Handle PUT request
+        try:
+            member = Member.objects.get(id=id)
+            data = request.data
+            return Response({'message': f'This is a PUT response with data: {data}'})
+        except Member.DoesNotExist:
+            return JsonResponse({'error': 'Member not found'}, status=404)
+    elif request.method == 'DELETE':
+        # member = Member.objects.get(id=id)
+        # Handle DELETE request
+        return Response({'message': 'This is a DELETE response'})
 
 def index(request):
     # Start with the request line
     request_line = f"{request.method} {request.get_full_path()} {request.META.get('SERVER_PROTOCOL', 'HTTP/1.1')}\n"
-
     # Collect headers
     headers = ""
     for header, value in request.headers.items():
         headers += f"{header}: {value}\n"
-
     # Collect the body
     if request.method == "POST":
         body = request.body.decode('utf-8')
