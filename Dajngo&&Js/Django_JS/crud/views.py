@@ -8,46 +8,52 @@ from rest_framework.decorators import api_view
 import json
 from django.views.decorators.http import require_http_methods
 
-# Create your views here.
+from django.views.decorators.csrf import csrf_exempt
 
-# def index(request):
-#     if request.method =='GET':
-#         Members = Member.objects.all().values('username')
-#         Members_list = list(Members)
-#         return JsonResponse(Members_list, safe=False)
-
-# Use serializer 
-
-# @require_http_methods(["DELETE"])
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
-
+@csrf_exempt
 
 def example_view(request):
     if request.method == 'GET':
         # Handle GET request
-        return JsonResponse({'message': 'This is a GET response'}, safe=False)
-
+        Members = Member.objects.all()
+        serializer = MemeberSerializer(Members, many=True)
+        return JsonResponse(serializer.data, safe=False)
+        # return JsonResponse({'message': 'This is a GET response'}, safe=False)
     elif request.method == 'POST':
         # Handle POST request
         data = request.data
-        return Response({'message': f'This is a POST response with data: {data}'},)
+        return Response({'message': f'This is a POST response with data: {data}'})
 
     # Handle other HTTP methods if needed
     return Response({'message': 'Method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@csrf_exempt
 def example_view2(request, id):
+    request_line = f"{request.method} {request.get_full_path()} {request.META.get('SERVER_PROTOCOL', 'HTTP/1.1')}\n"
+    print(request_line)
     if request.method == 'PUT':
         # Handle PUT request
         try:
             member = Member.objects.get(id=id)
-            data = request.data
-            return Response({'message': f'This is a PUT response with data: {data}'})
+            data = request.body
+            return JsonResponse("PUT", safe=False)
+            # return Response({'message': f'This is a PUT response with data: {data}'})
         except Member.DoesNotExist:
-            return JsonResponse({'error': 'Member not found'}, status=404)
+            print("noot fouuund ")
+            return JsonResponse({'error': 'Member not found'}, status=404, safe=False)
     elif request.method == 'DELETE':
-        # member = Member.objects.get(id=id)
         # Handle DELETE request
-        return Response({'message': 'This is a DELETE response'})
+        try:
+            member = Member.objects.get(id=id)
+            data = request.body
+            member.delete()
+            return JsonResponse("Deleted", safe=False)
+            # return Response({'message': f'This is a DELETE response with data: {data}'})
+        except Member.DoesNotExist:
+            print("noot fouuund ")
+            return JsonResponse({'error': 'Member not found'}, status=404, safe=False)
 
 def index(request):
     # Start with the request line
