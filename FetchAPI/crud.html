@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="data:,">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Operations with API</title>
     <style>
@@ -39,7 +40,7 @@
     <h2>Delete Item</h2>
     <div>
         <input type="text" id="deleteId" placeholder="ID" class="form-control">
-        <button onclick="deleteItem()">Delete</button>
+        <button class="delete-btn">Delete</button>
     </div>
 
     <h2>Test http methods</h2>
@@ -48,16 +49,18 @@
     <button onclick="example_view_Get()">GET</button>
     <button onclick="example_view_Post()">POST</button>
     <button onclick="example_view_Put()">PUT</button>
-    <button onclick="example_view_Delete()">DELETE</button>
+    <button class="delete-btn">DELETE</button>
     <h3 id="msg"></h3>
 
     <script>
+        
         // const apiUrl = 'https://example.com/api/items';
         // const apiUrl = 'http://127.0.0.1:8000/crud';
         const apiUrl = 'http://127.0.0.1:8000/crud/';
 
         async function example_view_Get() {
             const response = await fetch(apiUrl);
+            console.log(response);
             const data = await response.json();
             console.log(data);
             const message = document.getElementById('msg');
@@ -179,37 +182,77 @@ function getCookie(name) {
             {
                 const id = document.getElementById('updateId').value;
                 const username = document.getElementById('updateusername').value;
-                const response = await fetch(`${apiUrl}/${id}/`, {
-                    // method: 'PUT',
-                    method: 'POST',
+                const member = {
+                    username: username,
+                    id: id
+                }
+                const response = await fetch(`${apiUrl}${id}/`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-
-                    body: JSON.stringify({ username })
+                    body: JSON.stringify(member)
                 });
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
+                console.log("Yeeees");
                 console.log(data)
                 console.log('Item updated:', data);
-                // readItems();
+                readItems();
+                console.log(document.getElementById('updateId').value);
+                document.getElementById('updateId').value = '';
+                document.getElementById('updateusername').value = '';
             } catch(error) {
                 console.error('Error updating item:', error);
             }
         }
 
         async function deleteItem() {
-            const id = document.getElementById('deleteId').value;
-            const response = await fetch(`${apiUrl}/${id}`, {
-                method: 'DELETE'
-                // method: 'GET'
-            });
-            const data = await response.json();
-            console.log('Item deleted:', data);
-            readItems();
+            try {
+                const id = document.getElementById('deleteId').value;
+                const response = await fetch(`${apiUrl}${id}/`, {
+                    method: 'DELETE'
+                });
+                console.log("test deleted");
+                
+                // if (!response.ok) {
+                    //     throw new Error(`HTTP error! Status: ${response.status}`);
+                    // }
+                    // const data = await response.json();
+                    // console.log('Item deleted:', data);
+                if (response.ok) {
+
+                    console.log("deleted");
+                    document.getElementById('deleteId').value = '';
+                    console.log(response);
+                }
+                else
+                {
+                    console.log("failed");
+                }
+                readItems();
+                // example_view_Get();
+                // const message = document.getElementById('msg');
+            // message.innerHTML = data.message;
+            // const data = response.json();
+            // message.innerHTML = '';
+            // data.forEach(item => {
+            //         const li = document.createElement('li');
+            //         li.textContent = `ID: ${item.id}, username: ${item.username},  age: ${item.age}`;
+            //         message.appendChild(li);
+            //     });
+            } catch (error) {
+                console.error('Error deleting item:', error);
+            }
         }
+        let del_btn = document.querySelector(".delete-btn");
+        del_btn.addEventListener('click', function(event){
+            // event.preventDefault();
+            console.log("del clocked");
+            deleteItem();
+        });
     </script>
 </body>
 </html>

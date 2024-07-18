@@ -5,4 +5,3 @@ class MemeberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Member
         fields = ['id', 'username', 'age']
-

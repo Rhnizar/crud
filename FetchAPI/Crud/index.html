@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:,">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Operations with API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-control {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>CRUD Operations with API</h1>
+
+    <h2>Create Item</h2>
+    <div>
+        <input type="text" id="username" placeholder="username" class="form-control">
+        <input type="number" id="age" placeholder="age" class="form-control">
+        <button onclick="createItem()">Create</button>
+    </div>
+
+    <h2>Read Items</h2>
+    <div>
+        <button onclick="readItems()">Read All</button>
+        <ul id="itemsList"></ul>
+    </div>
+
+    <h2>Update Item</h2>
+    <div>
+        <input type="text" id="updateId" placeholder="ID" class="form-control">
+        <input type="text" id="updateusername" placeholder="New Name" class="form-control">
+        <button onclick="updateItem()">Update</button>
+    </div>
+
+    <h2>Delete Item</h2>
+    <div>
+        <input type="text" id="deleteId" placeholder="ID" class="form-control">
+        <button onclick="deleteItem()">Delete</button>
+    </div>
+    <script>
+        const apiUrl = 'http://127.0.0.1:8000/crud/';
+        async function createItem()
+        {
+            try {
+                const username = document.getElementById('username').value;
+                const age = document.getElementById('age').value;
+                const member = {
+                    username: username,
+                    age: age
+                };
+                const response =  await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // I have to add CSRF token here 
+                        // CSRFToken:  .....
+                    },
+                    body: JSON.stringify(member),
+                });
+                if (!response.ok) {
+                    throw new Error(`${response.status}  ${response.statusText}`);
+                }
+                document.getElementById('username').value = '';
+                document.getElementById('age').value = '';
+                const data = await response.json();
+                console.log('you have create Item with username : ', data.username);
+                readItems();
+            } catch(error) {
+                console.error('Error creating item: ', error);
+            }
+        }
+        async function readItems()
+        {
+            try {
+                const response =  await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`${response.status}  ${response.statusText}`);
+                }
+                const data = await response.json();
+                console.log(data);
+                itemsList.innerHTML = '';
+                data.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${item.id}, username: ${item.username},  age: ${item.age}`;
+                    itemsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error reading Items: ', error);
+            }
+        }
+        async function updateItem()
+        {
+            try {
+                const id = document.getElementById('updateId').value;
+                const username = document.getElementById('updateusername').value;
+                const member = {
+                    username: username,
+                    id: id
+                }
+                const response = await fetch(`${apiUrl}${id}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(member)
+                });
+                if (!response.ok) {
+                    throw new Error(`${response.status}  ${response.statusText}`);
+                }
+                readItems();
+                const data = await response.json();
+                // console.log('you have update Item with username : ', data.username);
+                document.getElementById('updateId').value = '';
+                document.getElementById('updateusername').value = '';
+            } catch(error) {
+                console.error('Error updating item: ', error);
+            }
+        }
+        async function deleteItem()
+        {
+            try {
+                const id = document.getElementById('deleteId').value;
+                const response = await fetch(`${apiUrl}${id}/`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) {
+                    throw new Error(`${response.status}  ${response.statusText}`);
+                }
+                readItems();
+                document.getElementById('deleteId').value = '';
+            } catch(error) {
+                console.error("Error deleting item: ", error)
+            }
+        }
+    </script>
