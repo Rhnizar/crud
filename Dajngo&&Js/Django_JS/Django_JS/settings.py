@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'crud', #new
 
     'corsheaders', #new
+
+    'Tournament', #new
+    'Profile', #new
 ]
 
 MIDDLEWARE = [

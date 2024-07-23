@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:,">
+    <title>Profile API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-control {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Profile API</h1>
+        <input type="number" id="Id" placeholder="id" class="form-control">
+        <br>
+        <button onclick="Show_Profile_Data()">Show_Profile_Data</button>
+        <h3 id="items"></h3>
+    </div>
+    <script>
+        const apiUrl = 'http://127.0.0.1:8000/Profile/prData/';
+        async function Show_Profile_Data()
+        {
+            try {
+                const response = await fetch(apiUrl);
+                if(!response.ok) {
+                    throw new Error('error Read');
+                }
+                const data = await response.json();
+                // console.log(data);
+                console.log(JSON.stringify(data, null, 2));
+                console.log("====");
+
+                console.log(data[0].user);  // Check if profile exists
+                // console.log(data[0].user.name);
+                const items = document.getElementById('items'); 
+                items.innerHTML = data[0].user.name;
+                // data.forEach(item => {
+                //     const h3 = document.createElement('h3');
+                //     h3.textContent = item.name;  // Assuming item is a string
+                //     items.appendChild(h3);
+                // });
+            } catch(error) {
+                console.error("Error Reading data: ", error);
+            }
+        }
+    </script>
+</body>
