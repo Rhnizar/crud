@@ -20,7 +20,7 @@ class StatsSerializer(serializers.ModelSerializer):
     graph = GraphSerializer(many=True)
     class Meta:
         model = Stats
-        fields = ['win', 'loss', 'rank', 'league', 'graph']
+        fields = ['id','win', 'loss', 'rank', 'league', 'graph']
 
 class AchievementsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,4 +35,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User_Profile
         # fields = ['user', 'profile_picture', 'joinDate', 'active', 'links']
-        fields = ['user', 'profile_picture', 'joinDate', 'active', 'links', 'stats', 'achievements']
+        fields = ['id', 'user', 'profile_picture', 'joinDate', 'active', 'links', 'stats', 'achievements']
