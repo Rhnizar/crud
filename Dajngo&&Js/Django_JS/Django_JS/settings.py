@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     'Tournament', #new
     'Profile', #new
+    'Tournament_Part', #new
 ]
 
 MIDDLEWARE = [

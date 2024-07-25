@@ -22,9 +22,17 @@
         <input type="number" id="Id" placeholder="id" class="form-control">
         <br>
         <button onclick="Show_Profile_Data_With_Id()">Show_Profile_Data_With_Id</button>
+        <h2>Edit Profile:</h2>
 
-        <br><br>
-        <input type="number" id="EditProfileId" placeholder="EditProfile_Id" class="form-control">
+        <label>id of User Profile: </label><input type="number" id="EditProfileId" placeholder="Id" class="form-control">
+        <br>
+        <label>Edit name of user: </label><input type="text" id="name" placeholder="name" class="form-control">
+        <br>
+        <label>Edit win stat :  </label><input type="number" id="win" placeholder="win" class="form-control">
+        <br>
+        <label>Edit loss stat :  </label><input type="number" id="loss" placeholder="loss" class="form-control">
+        <br>
+        <label>Edit rank stat :  </label><input type="number" id="rank" placeholder="rank" class="form-control">
         <br>
         <button onclick="EditProfile_With_Id()">EditProfile_With_Id</button>
         <h3 id="items"></h3>
@@ -35,9 +43,31 @@
         {
             const apiUrlEdit = 'http://127.0.0.1:8000/Profile/EditProfile/';
             const DataId = document.getElementById("EditProfileId").value;
+            const name = document.getElementById("name").value;
+            const win = document.getElementById("win").value;
+            const loss = document.getElementById("loss").value;
+            const rank = document.getElementById("rank").value;
             console.log(DataId);
+            if (!DataId || !name || !win || !loss || !rank) {
+                alert("input is empty");
+                console.error("input is empty");
+                return;
+            }
+            const UserProfile = {
+                id: DataId,
+                name: name,
+                win: win,
+                loss: loss,
+                rank: rank
+            }
             try {
-                const response = await fetch(`${apiUrlEdit}${DataId}/`);
+                const response = await fetch(`${apiUrlEdit}${DataId}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(UserProfile)
+                });
                 if(!response.ok) {
                     console.log("Erroooor");
                     console.log(response);
