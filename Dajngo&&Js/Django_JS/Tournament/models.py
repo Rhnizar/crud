@@ -4,8 +4,10 @@ from django.db import models
 
 class Tournament(models.Model):
     name = models.CharField(max_length=255)
-    start_date = models.DateField()
-    end_date = models.DateField()
+    # start_date = models.DateField()
+    # end_date = models.DateField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     num_players = models.IntegerField(choices=[(4, '4 Players'), (8, '8 Players'), (16, '16 Players')])
 
     def __str__(self):
@@ -21,7 +23,8 @@ class Stage(models.Model):
     
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE, related_name='stages')
     stage_type = models.CharField(max_length=20, choices=STAGE_CHOICES)
-    date = models.DateField()
+    # date = models.DateField()
+    date = models.DateTimeField()
     ready_to_play = models.BooleanField(default=False)
 
     def __str__(self):
